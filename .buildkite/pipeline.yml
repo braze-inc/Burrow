@@ -1,0 +1,28 @@
+steps:
+  - label: ":docker: Build/Cache Docker Image"
+    plugins:
+      - docker-login#v2.0.1:
+          server: $ARTIFACTORY_URL
+          username: $ARTIFACTORY_USERNAME
+          password-env: ARTIFACTORY_PASSWORD
+      - docker-login#v2.0.1:
+          username: $DOCKER_USERNAME
+    commands:
+      - "docker build -t ${ARTIFACTORY_URL}/docker/burrow:${BUILDKITE_COMMIT} -f Dockerfile . "
+      - "docker push ${ARTIFACTORY_URL}/docker/burrow:${BUILDKITE_COMMIT}"
+    retry:
+      automatic: true
+
+  - label: ":rocket: Tag Image for Master"
+    plugins:
+      - docker-login#v2.0.1:
+          username: $DOCKER_USERNAME
+      - docker-login#v2.0.1:
+          server: $ARTIFACTORY_URL
+          username: $ARTIFACTORY_USERNAME
+          password-env: ARTIFACTORY_PASSWORD
+    commands:
+      - "docker pull ${ARTIFACTORY_URL}/docker/burrow:${BUILDKITE_COMMIT}"
+      - "docker tag ${ARTIFACTORY_URL}/docker/burrow:${BUILDKITE_COMMIT} ${ARTIFACTORY_URL}/docker/burrow:master"
+      - "docker push ${ARTIFACTORY_URL}/docker/burrow:master"
+    branches: "master"
